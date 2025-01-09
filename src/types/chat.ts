@@ -1,12 +1,13 @@
 export interface Conversation {
   id: string;
+  conversationId: string;
   title: string;
   lastMessage: string;
-  timestamp: string;
+  updatedAt: string;
 }
 
 export interface Message {
-  id: string;
+  messageId: string;
   content: string;
   role: 'user' | 'assistant';
   timestamp: string;

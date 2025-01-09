@@ -35,13 +35,13 @@ export function ChatSidebar({
         <div className="space-y-2 p-2">
           {conversations.map((conversation) => (
             <Button
-              key={conversation.id}
+              key={conversation.conversationId}
               variant="ghost"
               className={cn(
                 "w-full justify-start gap-2 text-left",
-                selectedChatId === conversation.id && "bg-accent"
+                selectedChatId === conversation.conversationId && "bg-accent"
               )}
-              onClick={() => onSelectChat(conversation.id)}
+              onClick={() => onSelectChat(conversation.conversationId)}
             >
               <MessageSquare className="h-4 w-4" />
               <div className="flex-1 truncate">

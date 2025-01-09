@@ -49,58 +49,87 @@ const mockMessages: Record<string, Message[]> = {
 
 // Mock API functions
 export const getConversations = async (): Promise<Conversation[]> => {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-  return mockConversations;
+  // await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+
+  const response = await fetch('http://localhost:8080/api/chat/conversations');
+  if (!response.ok) {
+    throw new Error('Failed to fetch conversations');
+  }
+  const data = await response.json();
+  return data as Conversation[];
 };
 
 export const getChatHistory = async (chatId: string): Promise<ChatHistory> => {
   await new Promise(resolve => setTimeout(resolve, 1000));
-  const messages = mockMessages[chatId] || [];
-  const conversation = mockConversations.find(c => c.id === chatId);
-  
-  if (!conversation) {
-    throw new Error('Chat not found');
+
+  const response = await fetch(`http://localhost:8080/api/chat/conversations/${chatId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch chat history');
   }
+  const data = await response.json();
+
+  console.log(data);
+  // const messages = mockMessages[chatId] || [];
+  // const conversation = mockConversations.find(c => c.id === chatId);
+  
+  // if (!conversation) {
+  //   throw new Error('Chat not found');
+  // }
 
   return {
-    id: chatId,
-    title: conversation.title,
-    messages
+    id: data['conversationId'],
+    title: data['title'],
+    messages: data['conversationMessages']
   };
 };
 
 export const sendMessage = async (chatId: string | null, message: string): Promise<{ chatId: string; message: Message }> => {
-  await new Promise(resolve => setTimeout(resolve, 1500));
   
-  const newChatId = chatId || `new-${Date.now()}`;
-  const newMessage: Message = {
-    id: `msg-${Date.now()}`,
-    content: message,
-    role: 'user',
-    timestamp: new Date().toISOString()
-  };
+  const response = await fetch(`http://localhost:8080/api/chat/conversations/${chatId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ "content": message })
+  });
 
-  const response: Message = {
-    id: `msg-${Date.now() + 1}`,
-    content: `This is a mock response to: "${message}"`,
-    role: 'assistant',
-    timestamp: new Date().toISOString()
-  };
-
-  if (!mockMessages[newChatId]) {
-    mockMessages[newChatId] = [];
-  }
-  
-  mockMessages[newChatId].push(newMessage, response);
-
-  if (!chatId) {
-    mockConversations.unshift({
-      id: newChatId,
-      title: message.slice(0, 30) + '...',
-      lastMessage: response.content,
-      timestamp: response.timestamp
-    });
+  if (!response.ok) {
+    throw new Error('Failed to send message');
   }
 
-  return { chatId: newChatId, message: response };
+  const data = await response.json();
+  
+  
+  // const newChatId = chatId || `new-${Date.now()}`;
+  // const newMessage: Message = {
+  //   id: `msg-${Date.now()}`,
+  //   content: message,
+  //   role: 'user',
+  //   timestamp: new Date().toISOString()
+  // };
+
+  // const response: Message = {
+  //   id: `msg-${Date.now() + 1}`,
+  //   content: `This is a mock response to: "${message}"`,
+  //   role: 'assistant',
+  //   timestamp: new Date().toISOString()
+  // };
+
+  // if (!mockMessages[newChatId]) {
+  //   mockMessages[newChatId] = [];
+  // }
+  
+  // mockMessages[newChatId].push(newMessage, response);
+
+  // if (!chatId) {
+  //   mockConversations.unshift({
+  //     id: newChatId,
+  //     title: message.slice(0, 30) + '...',
+  //     lastMessage: response.content,
+  //     timestamp: response.timestamp
+  //   });
+  // }
+  console.log(data);
+
+  return { chatId: data['conversationId'], message: data };
 };

@@ -46,6 +46,7 @@ export default function Index() {
         const data = await getChatHistory(selectedChatId);
         setMessages(data.messages);
       } catch (error) {
+
         toast({
           title: "Error",
           description: "Failed to load chat history",
@@ -66,12 +67,20 @@ export default function Index() {
 
   const handleSendMessage = async (content: string) => {
     try {
+
+      if (!selectedChatId) {
+        const newConversation = await sendMessage(null, content);
+        setSelectedChatId(newConversation.chatId);
+        const updatedConversations = await getConversations();
+        setConversations(updatedConversations);
+      }
+
       setIsLoading(true);
       const { chatId, message } = await sendMessage(selectedChatId, content);
-      
+
       // Update messages
-      setMessages(prev => [...prev, 
-        { id: Date.now().toString(), content, role: 'user', timestamp: new Date().toISOString() },
+      setMessages(prev => [...prev,
+      { messageId: Date.now().toString(), content, role: 'user', timestamp: new Date().toISOString() },
         message
       ]);
 

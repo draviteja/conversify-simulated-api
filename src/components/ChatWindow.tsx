@@ -20,9 +20,9 @@ export function ChatWindow({
     <div className={cn("flex flex-col h-screen", className)}>
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => (
+          {messages.map((message, i) => (
             <div
-              key={message.id}
+              key={i}
               className={cn(
                 "flex flex-col max-w-[80%] space-y-2 p-4 rounded-lg",
                 message.role === "user"
@@ -45,7 +45,7 @@ export function ChatWindow({
           ))}
           {isLoading && (
             <div className="flex items-center justify-center p-4">
-              <div className="animate-pulse">Thinking...</div>
+              <div className="animate-pulse">Loading...</div>
             </div>
           )}
         </div>

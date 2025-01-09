@@ -67,10 +67,25 @@ export default function Index() {
 
   const handleSendMessage = async (content: string) => {
     try {
-
       if (!selectedChatId) {
-        const newConversation = await sendMessage(null, content);
-        setSelectedChatId(newConversation.chatId);
+        console.log("conversationdId is not exist so creating new conversation");
+        const createConversationResponse = await fetch('http://localhost:8080/api/chat/conversations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content: content })
+        });
+
+        if (!createConversationResponse.ok) {
+          throw new Error('Failed to create conversation');
+        }
+
+        const createConversationData = await createConversationResponse.json();
+        console.log("conversationd created with id: ", createConversationData.conversationId);
+        const newConversation = await sendMessage(createConversationData.conversationId, content);
+        console.log("new message created in chat :" + newConversation.chatId);
+        setSelectedChatId(createConversationData.conversationId);
         const updatedConversations = await getConversations();
         setConversations(updatedConversations);
       }
@@ -83,12 +98,13 @@ export default function Index() {
       { messageId: Date.now().toString(), content, role: 'user', timestamp: new Date().toISOString() },
         message
       ]);
-
+      console.log("aaaaaa");
       // If this is a new chat, update the selected chat ID and refresh conversations
       if (!selectedChatId) {
-        setSelectedChatId(chatId);
-        const updatedConversations = await getConversations();
-        setConversations(updatedConversations);
+        // console.log("aaaaaa");
+        // setSelectedChatId(chatId);
+        // const updatedConversations = await getConversations();
+        // setConversations(updatedConversations);
       }
     } catch (error) {
       toast({

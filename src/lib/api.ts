@@ -4,28 +4,30 @@ import { Conversation, ChatHistory, Message } from '@/types/chat';
 const mockConversations: Conversation[] = [
   {
     id: '1',
+    conversationId: '1',
     title: 'React Performance Tips',
     lastMessage: 'Here are some tips for optimizing React applications...',
-    timestamp: '2024-03-10T10:00:00Z'
+    updatedAt: '2024-03-10T10:00:00Z'
   },
   {
     id: '2',
+    conversationId: '2',
     title: 'TypeScript Best Practices',
     lastMessage: 'When working with TypeScript, it\'s important to...',
-    timestamp: '2024-03-09T15:30:00Z'
+    updatedAt: '2024-03-09T15:30:00Z'
   }
 ];
 
 const mockMessages: Record<string, Message[]> = {
   '1': [
     {
-      id: '1',
+      messageId: '1',
       content: 'What are some tips for optimizing React applications?',
       role: 'user',
       timestamp: '2024-03-10T10:00:00Z'
     },
     {
-      id: '2',
+      messageId: '2',
       content: 'Here are some tips for optimizing React applications:\n1. Use React.memo for component memoization\n2. Implement lazy loading\n3. Optimize dependencies',
       role: 'assistant',
       timestamp: '2024-03-10T10:00:05Z'
@@ -33,13 +35,13 @@ const mockMessages: Record<string, Message[]> = {
   ],
   '2': [
     {
-      id: '3',
+      messageId: '3',
       content: 'What are some TypeScript best practices?',
       role: 'user',
       timestamp: '2024-03-09T15:30:00Z'
     },
     {
-      id: '4',
+      messageId: '4',
       content: 'When working with TypeScript, it\'s important to:\n1. Use strict mode\n2. Define proper interfaces\n3. Leverage type inference',
       role: 'assistant',
       timestamp: '2024-03-09T15:30:05Z'
@@ -129,7 +131,5 @@ export const sendMessage = async (chatId: string | null, message: string): Promi
   //     timestamp: response.timestamp
   //   });
   // }
-  console.log(data);
-
   return { chatId: data['conversationId'], message: data };
 };
